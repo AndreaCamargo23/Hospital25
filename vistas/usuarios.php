@@ -144,7 +144,7 @@ session_start();
                         <h6 class="collapse-header">Gestionar:</h6>
                         <a class="collapse-item" href="infoCamas.php">Camas</a>
                         <a class="collapse-item" href="infoFact.php">Facturacion</a>
-                        <a class="collapse-item" href="infoServicio.php">Servicios</a>
+                        <a class="collapse-item" href="infoServicios.php">Servicios</a>
                     </div>
                 </div>
             </li>

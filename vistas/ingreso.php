@@ -527,13 +527,13 @@ session_start();
                       <select class="form-select" id="cama" aria-label="Default select example">
                         <option selected>Seleccione una opción</option>
 					<?php
-							$sql = "select * from cama where id_estado_fk='1'"; 
+							$sql = "select * from cama left join tipo on (cama.id_tipo_fk=tipo.id_tipo) where id_estado_fk='1'"; 
 							$res = $link->prepare($sql);//Prepara la consulta para su ejecución
 							$res->execute(); //Ejecuta la consulta 
 							$row = $res->fetchAll(PDO::FETCH_ASSOC);
 							//cuando ya no hayan datos se va a generar el ciclo
 							for($i=0; $i<count($row); $i++){
-								print "<option value=".$row[$i]['id_cama'].">".$row[$i]['id_cama']."</option>";
+								print "<option value=".$row[$i]['id_cama'].">".$row[$i]['id_cama']." - ".$row[$i]['tipo']."</option>";
 							}	
 					?>
                       </select>

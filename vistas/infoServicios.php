@@ -1,9 +1,12 @@
-<?php 
-    session_start();
+<?php
+function codigo(){
+	return $codigo=rand();
+}
+
+session_start();
     if($_SESSION['user']==null){
         header('Location:../login.php');
-    }
-    
+    } 
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +20,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link href="./img/hospital.ico" rel="icon" type="ico">
-    <title>Principal</title>
+    <title>Facturación</title>
 
     <!-- Custom fonts for this template -->
     <link href="../librerias/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -35,7 +38,7 @@
 	<!--ICONOS-->
     <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <link href="../librerias/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-	<!--Notificaciones-->
+    <!--Notificaciones-->
 	<link rel="stylesheet" href="../librerias/swa2/dist/sweetalert2.min.css">
 
 
@@ -61,7 +64,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="indexAdmi.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Principal</span></a>
@@ -83,9 +86,16 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Agregar:</h6>
+                        <?php 
+                            if($_SESSION['rol']==1){                            
+                        ?>
                         <a class="collapse-item" href="usuarios.php">Usuario</a>
                         <a class="collapse-item" href="empleado.php">Empleado</a>
                         <a class="collapse-item" href="paciente.php">Paciente</a>
+                        <?php }else{
+
+                        ?>
+                        <a class="collapse-item" href="paciente.php">Paciente</a><?php }?>
                     </div>
                 </div>
             </li>
@@ -124,7 +134,7 @@
 			<div class="sidebar-heading">
                 Gestion
             </div>
-			<li class="nav-item">
+			<li class="nav-item active">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseInformes" aria-expanded="true" aria-controls="collapseInformes">
                     <i class="fas fa-fw fa-info-circle"></i>
                     <span>Informes</span>
@@ -139,12 +149,13 @@
                 </div>
             </li>
 			<hr class="sidebar-divider d-none d-md-block">
+
             <!-- Divider 
             <hr class="sidebar-divider">-->
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Ajustes
+                Interface
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
@@ -155,6 +166,15 @@
                     <i class="fas fa-fw fa-wrench"></i>
                     <span>Configuracion</span>
                 </a>
+                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Custom Utilities:</h6>
+                        <a class="collapse-item" href="#">Colors</a>
+                        <a class="collapse-item" href="#">Borders</a>
+                        <a class="collapse-item" href="#">Animations</a>
+                        <a class="collapse-item" href="#">Other</a>
+                    </div>
+                </div>
             </li>
 
             <!-- Sidebar Toggler (Sidebar) -->
@@ -326,7 +346,7 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['user']; ?></span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['user'];?></span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
@@ -348,262 +368,53 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <!-- Content Row -->
-                    <div class="row">
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Cantidad de camas disponibles</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-											<?php
-											include '../baseDatos/conexionbd.php'; 
-											//Creación del objeto de la clase 
-											$obBD = new Conexion(); 
-											$link = $obBD->Conectar();
-											$sql = "select count(id_cama) from cama where id_estado_fk=1"; 
-											$res = $link->prepare($sql);//Prepara la consulta para su ejecución
-											$res->execute(); //Ejecuta la consulta 
-											$row = $res->fetchAll(PDO::FETCH_ASSOC);
-												//cuando ya no hayan datos se va a generar el ciclo
-												print $row[0]['count(id_cama)']; 											
-											?></div>
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-2 text-gray-800">Informes Servicios</h1>
+                    <p class="mb-4">En el siguiente apartado se muestran los Servicios que han adquirido</p>
+                
+                    <!--boton para agregar registro-->
+                    <div class="container-fluid">
+                        <div class="row">
+                            <form id="formServicio">                                
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <label class="col-form-label">Fecha Entrada:</label>
+                                            <input type="date" id="fecha_entrada" required>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-bed fa-2x text-gray-300"></i>
+                                        <div class="col-lg-3">
+                                            <label class="col-form-label">Fecha Salida</label>
+                                            <input type="date" id="fecha_salida"required>                                                                                    
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Ingresos de este año</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-											<?php
-											//Creación del objeto de la clase 
-											$sql = "select sum(valor_total) from facturacion where YEAR(fecha_pago)=YEAR(NOW());"; 
-											$res = $link->prepare($sql);//Prepara la consulta para su ejecución
-											$res->execute(); //Ejecuta la consulta 
-											$row = $res->fetchAll(PDO::FETCH_ASSOC);
-												//cuando ya no hayan datos se va a generar el ciclo
-												print $row[0]['sum(valor_total)']; 											
-											?>
-											</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pacientes activos
-                                            </div>
-                                            <div class="row">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-													<?php
-													//Creación del objeto de la clase 
-													$sql = "select count(*) from paciente where id_estado_fk=4;"; 
-													$res = $link->prepare($sql);//Prepara la consulta para su ejecución
-													$res->execute(); //Ejecuta la consulta 
-													$row = $res->fetchAll(PDO::FETCH_ASSOC);
-														//cuando ya no hayan datos se va a generar el ciclo
-														print $row[0]['count(*)']; 
-													$numero=$row[0]['count(*)'];
-													?>
-													</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-4">
-                                                        <div class="progress-bar bg-info" role="progressbar" style="width: 100%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Cantidad de ingresos de pacientes hoy</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-											<?php
-													//Creación del objeto de la clase 
-													$sql = "select count(*) from ingreso where fecha_ingreso=now();"; 
-													$res = $link->prepare($sql);//Prepara la consulta para su ejecución
-													$res->execute(); //Ejecuta la consulta 
-													$row = $res->fetchAll(PDO::FETCH_ASSOC);
-														//cuando ya no hayan datos se va a generar el ciclo
-														print $row[0]['count(*)']; 
-													$numero=$row[0]['count(*)'];
-													?>
-											</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div class="col-lg-3">                                              
+                                            <button type="submit" id="btnConsultar" class="btn btn-primary">Consultar</button>     
+                                        </div>                                                      
+                                    </div> 
+                            </form>
                         </div>
                     </div>
-
-                    <!-- Content Row -->
-
-                    <div class="row">
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
+                    <br>
+                    <!-- DataTales Example -->
+                    <div class="card shadow mb-8">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Consulta Informes Servicios</h6>
                         </div>
-
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Donaciones
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Servicios
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Gobierno
-                                        </span>
-                                    </div>
-                                </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="tablaServicios" class="table table-bordered">
+									<thead class="text-center"> 
+										<tr>
+                                          <th>ID</th>
+										  <th>NOMBRE DEL SERVICIO</th>
+										  <th>N°</th>
+										</tr>
+									</thead>									
+									<tbody class="text-center">
+										<tr>
+									    </tr>
+									</tbody>
+								</table>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Project Card Example -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Servicios</h6>
-                                </div>
-                                <div class="card-body">
-                                    <h4 class="small font-weight-bold">Medicina General<span class="float-right">20%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Neurología<span class="float-right">40%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Ginecología y Obstetricia <span class="float-right">60%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Oncologia <span class="float-right">80%</span></h4>
-                                    <div class="progress mb-4">
-                                        <div class="progress-bar bg-info" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <h4 class="small font-weight-bold">Urgencias <span class="float-right">Lleno!</span></h4>
-                                    <div class="progress">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                </div>
-                            </div>                        
-                        </div>
-
-                        <div class="col-lg-6 mb-4">
-
-                            <!-- Illustrations -->
-                            <div class="card shadow mb-4">
-                                <div class="card-header py-3">
-                                    <h6 class="m-0 font-weight-bold text-primary">Medicina Bans</h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="text-center">
-                                        <img class="img-fluid px-3 px-sm-4 mt-3 mb-4" style="width: 25rem;" src="img/undraw_medicine_b1ol.svg" alt="...">
-                                    </div>
-                                    <p>Add some quality, svg illustrations to your project courtesy of <a target="_blank" rel="nofollow" href="https://undraw.co/">unDraw</a>, a constantly updated collection of beautiful svg images that you can use completely
-                                        free and without attribution!</p>
-                                </div>
-                            </div>
-
-                            <!-- Approach -->
-                           
-
                         </div>
                     </div>
 
@@ -617,7 +428,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; Your Website 2020</span>
                     </div>
                 </div>
             </footer>
@@ -634,12 +445,12 @@
         <i class="fas fa-angle-up"></i>
     </a>
 
-    <!-- Logout Modal-->
+    <!-- Modal Salir-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">¿Seguro que quiere salir?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -652,9 +463,56 @@
             </div>
         </div>
     </div>
+    
 
-    <!-- Bootstrap core JavaScript-->
-    <!-- Bootstrap core JavaScript-->
+    <!-- Modal Informe--> 
+    <div class="modal fade" id="modalInforme" tabindex="-1" aria-labelledby="modalFactura" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalFactura"></h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                </div>
+                <form id="formServicio">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">Fecha Entrada</label>
+                                    <input type="date" class="form-control" id="fecha_e" disabled="true" required> 
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-gruop">
+                                <label class="col-form-label">Fecha Salida</label>
+                                    <input type="date" class="form-control" id="fecha_s" disabled="true" required> 
+                                </div>
+                            </div>         
+                            <table id="tabla2" class="table table-bordered">
+                                <thead class="text-center"> 
+                                    <tr>
+                                    <th>Servicio</th>
+                                    <th>N°</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>                          
+                        </div>                        
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-primary" href="">Ok</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+        <!-- Bootstrap core JavaScript-->
     <script src="../librerias/jquery/jquery.min.js"></script>
     <script src="../librerias/bootstrap/js/bootstrap.bundle.min.js"></script>    
 
@@ -670,16 +528,9 @@
     <script type="text/javascript" src="../librerias/DataTables/datatables.min.js"></script>  
 
     <!-- main del java scrip -->
-    <script src="./js/funcion.js"></script>
-	<!--Notificaciones-->
+	<script src="./js/data-infoSe.js"></script>
+    <!--Notificaciones-->
 	<script src="../librerias/swa2/dist/sweetalert2.min.js"></script>
-	
-	<!-- Page level plugins -->
-    <script src="./js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="./js/demo/chart-area-demo.js"></script>
-    <script src="./js/demo/chart-pie-demo.js"></script>
 
 </body>
 

@@ -146,7 +146,8 @@ $(document).ready(function() {
 					{ "data": "nombre" },
 					{ "data": "apellido" }					
 				]
-			});			
+			});	
+				tabla2.ajax.reload(null, false);
 		});
 		$("#pacientes").modal('show');		
     });
